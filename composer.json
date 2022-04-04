@@ -1,0 +1,20 @@
+{
+    "name": "ugurakcil/yfin",
+    "description": "Fetching some stock and crypto prices with php",
+    "type": "project",
+    "require": {
+        "scheb/yahoo-finance-api": "^4.3"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Uğur AKÇIL",
+            "email": "ugurakcil@gmail.com"
+        }
+    ]
+}

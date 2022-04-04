@@ -42,15 +42,25 @@ class FinancialData
                 $quoteDirection = "down";
             }
 
-            $output->{$quote->getSymbol()} = (object) [
+            $output->{$quote->getSymbol()} = $this->outFormat([
                 "name"      => $list[$quote->getSymbol()],
-                "change"    => number_format($quote->getRegularMarketChangePercent(),2),
-                "price"     => number_format($quote->getRegularMarketPrice(), 2),
+                "change"    => $quote->getRegularMarketChangePercent(),
+                "price"     => $quote->getRegularMarketPrice(),
                 "direction" => $quoteDirection
-            ];
+            ]);
         }
 
         return (object) $output;
+    }
+
+    public function outFormat(array $pureData) 
+    {
+        return (object) [
+            "name"      => $pureData['name'],
+            "change"    => number_format((float) $pureData['change'], 2, '.', ''),
+            "price"     => (float) number_format($pureData['price'],  2, '.', ''),
+            "direction" => $pureData['direction'] 
+        ];
     }
 
 }

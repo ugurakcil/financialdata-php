@@ -12,12 +12,25 @@ require __DIR__ . '/vendor/autoload.php';
 $financialData = new \App\FinancialData();
 
 $currencies = $financialData->getQuotes([
-    "EURUSD=X" => "EUR / USD",
-    "GBPUSD=X" => "GBP / USD",
-    "USDJPY=X" => "USD / JPY",
-    "XAUUSD=X" => "XAU / USD",
-    "XAGUSD=X" => "XAG / USD"
+    "EURUSD=X"  => "EUR / USD",
+    "GBPUSD=X"  => "GBP / USD",
+    "TRY=X"     => "USD / TRY",
+    "EURTRY=X"  => "EUR / TRY",
+    "KGRUSD"    => "KGR / USD",
+    "USDJPY=X"  => "USD / JPY",
+    "GC=F"      => "XAU / USD",
+    "SI=F"      => "XAG / USD",
+    "BZ=F"      => "XBR / USD",
+    "MCL=F"     => "XTI / USD",
 ]);
+
+$currencies->{"KGRUSD"} = $financialData->outFormat([
+    "name"      => "KGR / USD",
+    "change"    => $currencies->{"GC=F"}->change,
+    "direction" => $currencies->{"GC=F"}->direction,
+    "price"     => $currencies->{"GC=F"}->price / 31,1034768
+]);
+
 
 $stocks = $financialData->getQuotes([
     "AEFES.IS"  => "AEFES",

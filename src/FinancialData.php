@@ -14,21 +14,23 @@ class FinancialData
         $this->client = ApiClientFactory::createApiClient();
     }
 
-    public function getQuotes(array $list): object
-    {
-        /*
-        if(apc_fetch("quotes")) {
-            echo "exists";
-            return apc_fetch("quotes");
-        } else {
-            echo "newdata";
-            apc_add("quotes", $this->setQuotes($list), 10);
-            return $this->setQuotes($list);
-        }
-        */
+    private function generateListId(array $list): string {
+        return substr(base64_encode(implode('',$list)),0,20);
     }
 
-    public function setQuotes(array $list): object
+    public function getQuotes(array $list): object
+    {
+        $apcuId = $this->generateListId($list);
+
+        if(apcu_fetch($apcuId)) {
+            return apcu_fetch($apcuId);
+        } else {
+            apcu_add($apcuId, $this->setQuotes($list), 10);
+            return $this->setQuotes($list);
+        }
+    }
+
+    private function setQuotes(array $list): object
     {
         $quotes = $this->client->getQuotes(array_keys($list));
         $output = (object)[];

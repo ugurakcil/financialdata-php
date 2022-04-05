@@ -72,13 +72,26 @@ $currencies = $financialData->getQuotes([
 /*
 * A specially calculated financial instrument can be added with an outformat
 * */
-$currencies->{"KGRUSD"} = $financialData->outFormat([
+$currencies->{"KGRUSD"} = $financialData->numFormat([
     "name"      => "KGR / USD",
     "change"    => $currencies->{"GC=F"}->change,
     "direction" => $currencies->{"GC=F"}->direction,
+    "close"     => $currencies->{"GC=F"}->close / 31,1034768,
     "price"     => $currencies->{"GC=F"}->price / 31,1034768
 ]);
 
+$kgrTryChange = $financialData->calculateChange(
+    $currencies->{"KGRUSD"}->close * $currencies->{"TRY=X"}->close,
+    $currencies->{"KGRUSD"}->price * $currencies->{"TRY=X"}->price
+);
+
+$currencies->{"KGRTRY"} = $financialData->numFormat([
+    "name"      => "KGR / TRY",
+    "change"    => $kgrTryChange,
+    "direction" => $kgrTryChange < 0 ? 'down' : 'up',
+    "close"     => $currencies->{"KGRUSD"}->close * $currencies->{"TRY=X"}->close,
+    "price"     => $currencies->{"KGRUSD"}->price * $currencies->{"TRY=X"}->price
+]);
 
 $stocks = $financialData->getQuotes([
     "AEFES.IS"  => "AEFES",
@@ -201,9 +214,11 @@ $stocks = $financialData->getQuotes([
 /*
 * Requests from two different parties are combined on a single json
 * */
+$shown = ['name', 'change', 'direction', 'price'];
+
 $listAllFinancialData = (object) [
-    'currencies'    => $currencies,
-    'stocks'        => $stocks
+    'currencies'    => $financialData->decoratePrint($currencies, $shown),
+    'stocks'        => $financialData->decoratePrint($stocks, $shown)
 ];
 
 echo json_encode($listAllFinancialData);

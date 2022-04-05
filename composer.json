@@ -1,8 +1,11 @@
 {
-    "name": "ugurakcil/yfin",
+    "name": "ugurakcil/financialdata-php",
     "description": "Fetching some stock and crypto prices with php",
     "type": "project",
     "require": {
+        "php": ">=8.0.0",
+        "ext-curl": "*",
+        "ext-apcu": "*",
         "scheb/yahoo-finance-api": "^4.3"
     },
     "license": "MIT",

@@ -62,7 +62,7 @@ $currencies = $financialData->getQuotes([
     "TRY=X"     => "USD / TRY",
     "EURTRY=X"  => "EUR / TRY",
     "KGRUSD"    => "KGR / USD",
-    "USDJPY=X"  => "USD / JPY",
+    "JPY=X"     => "USD / JPY",
     "GC=F"      => "XAU / USD",
     "SI=F"      => "XAG / USD",
     "BZ=F"      => "XBR / USD",

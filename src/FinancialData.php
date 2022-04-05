@@ -45,7 +45,7 @@ class FinancialData
         if(apcu_fetch($apcuId)) {
             return apcu_fetch($apcuId);
         } else {
-            apcu_add($apcuId, $this->setQuotes($list), 10);
+            apcu_add($apcuId, $this->setQuotes($list), 3600);
             return $this->setQuotes($list);
         }
     }

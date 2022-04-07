@@ -18,13 +18,7 @@ declare(strict_types=1);
 * All requests are allowed in development mode
 * Don't forget to set the development mode to false when going live
 * */
-$developmentMode = true;
-
-$allowedOrigins = array(
-    '(http(s)://)?(www\.)?website\.xyz',
-    '(http(s)://)?(www\.)?test\.my',
-    '(http(s)://)?(www\.)?my\-domain\.com'
-);
+$developmentMode = false;
 
 /*
 * Header information, debugging, dependencies
@@ -38,16 +32,8 @@ if($developmentMode) {
 }
 
 header('Content-type: application/json; charset=utf-8');
-
-if (!$developmentMode && isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] != '') {
-    foreach ($allowedOrigins as $allowedOrigin) {
-        if (preg_match('#' . $allowedOrigin . '#', $_SERVER['HTTP_ORIGIN'])) {
-            header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
-            header('Access-Control-Allow-Methods: GET'); // PUT, POST, OPTIONS, DELETE
-            break;
-        }
-    }
-}
+header('Access-Control-Allow-Methods: GET, OPTIONS');
+header('Access-Control-Allow-Origin: *');
 
 require __DIR__ . '/vendor/autoload.php';
 
@@ -67,6 +53,9 @@ $currencies = $financialData->getQuotes([
     "SI=F"      => "XAG / USD",
     "BZ=F"      => "XBR / USD",
     "MCL=F"     => "XTI / USD",
+    "DOW"       => "DOW",
+    "^IXIC"     => "NASDAQ",
+    "^GSPC"     => "S&P"
 ]);
 
 /*
@@ -80,17 +69,22 @@ $currencies->{"KGRUSD"} = $financialData->numFormat([
     "price"     => $currencies->{"GC=F"}->price / 31,1034768
 ]);
 
+if(isset($currencies->{"TRY=X"}))
+  $usdTry = $currencies->{"TRY=X"};
+else
+  $usdTry = $currencies->{"USDTRY=X"};
+
 $kgrTryChange = $financialData->calculateChange(
-    $currencies->{"KGRUSD"}->close * $currencies->{"TRY=X"}->close,
-    $currencies->{"KGRUSD"}->price * $currencies->{"TRY=X"}->price
+    $currencies->{"KGRUSD"}->close * $usdTry->close,
+    $currencies->{"KGRUSD"}->price * $usdTry->price
 );
 
 $currencies->{"KGRTRY"} = $financialData->numFormat([
     "name"      => "KGR / TRY",
     "change"    => $kgrTryChange,
     "direction" => $kgrTryChange < 0 ? 'down' : 'up',
-    "close"     => $currencies->{"KGRUSD"}->close * $currencies->{"TRY=X"}->close,
-    "price"     => $currencies->{"KGRUSD"}->price * $currencies->{"TRY=X"}->price
+    "close"     => $currencies->{"KGRUSD"}->close * $usdTry->close,
+    "price"     => $currencies->{"KGRUSD"}->price * $usdTry->price
 ]);
 
 $stocks = $financialData->getQuotes([
